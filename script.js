@@ -85,5 +85,47 @@ const navLinksDiv = document.querySelector(".nav .links");
 document.querySelector(".brand").addEventListener("click", () => {
   nav.classList.toggle("active");
 });
+ // Example conversion rates (static demo)
+// NOTE: agar live rates chahiye to API use karni hogi
+const rates = {
+  USD: 1, PKR: 277, INR: 83, EUR: 0.92, GBP: 0.79, AUD: 1.53, CAD: 1.37,
+  JPY: 147, CNY: 7.2, AED: 3.67, SAR: 3.75, TRY: 27, RUB: 95, BDT: 109,
+  LKR: 326, NPR: 133, MYR: 4.7, THB: 35, ZAR: 19, BRL: 5, MXN: 17.5
+};
+const symbols = {
+  USD:"$", PKR:"₨", INR:"₹", EUR:"€", GBP:"£", AUD:"A$", CAD:"C$", 
+  JPY:"¥", CNY:"¥", AED:"د.إ", SAR:"﷼", TRY:"₺", RUB:"₽", BDT:"৳",
+  LKR:"₨", NPR:"₨", MYR:"RM", THB:"฿", ZAR:"R", BRL:"R$", MXN:"Mex$"
+};
+
+// Fill dropdown dynamically
+const select = document.getElementById("currency");
+Object.keys(rates).forEach(cur=>{
+  const opt = document.createElement("option");
+  opt.value = cur;
+  opt.textContent = `${cur} — ${symbols[cur]||cur}`;
+  if(cur==="USD") opt.selected = true;
+  select.appendChild(opt);
+});
+
+const prices = document.querySelectorAll(".price");
+
+function convertPrices(){
+  const cur = select.value;
+  prices.forEach(p=>{
+    const usd = parseFloat(p.dataset.usd);
+    if(!usd) return;
+    const v = usd * (rates[cur] || 1);
+    const out = (["PKR","INR","JPY","CNY","LKR","NPR","BDT"].includes(cur))
+      ? Math.round(v)
+      : v.toFixed(2);
+    p.textContent = (symbols[cur]||"") + out;
+  });
+}
+
+select.addEventListener("change", convertPrices);
+
+// Page load pe bhi run karo
+convertPrices();
 
 
